@@ -1,0 +1,66 @@
+	.data
+str0: 	.asciiz "Factorial of "
+str1: 	.asciiz "value of fact is "
+	.text
+main:
+	li $t5,1
+	sw $t5, -4($sp)
+	lw  $t1,-4($sp) 
+	sw  $t1,0($sp) 
+	li $t5,6
+	sw $t5, -12($sp)
+	lw  $t1,-12($sp) 
+	sw  $t1,-8($sp) 
+	li $t5,1
+	sw $t5, -20($sp)
+	lw  $t1,-20($sp) 
+	sw  $t1,-16($sp) 
+	li $v0 4
+	la $a0,	str0 
+	syscall
+	lw $a0 -8($sp)
+	li $v0,1 
+	syscall
+	li $a0,10
+	li $v0,11 
+	syscall
+iter0:
+	lw  $t1,0($sp) 
+	lw  $t2,-8($sp) 
+	sub $t3,$t1,$t2 
+	bltz $t3,label0
+	li $t5,0
+	sw $t5, -28($sp)
+	j label1
+label0:
+	li $t5,1
+	sw $t5, -28($sp)
+label1:
+	lw  $t1,-28($sp) 
+	li $t2,1
+	bne $t1,$t2,nextl0
+	lw  $t1,0($sp) 
+	lw  $t2,-16($sp) 
+	mul $t3,$t1,$t2 
+	sw  $t3,-32($sp) 
+	lw  $t1,-32($sp) 
+	sw  $t1,-24($sp) 
+	lw  $t1,-24($sp) 
+	sw  $t1,-16($sp) 
+	lw $t1,0($sp)
+	li $t3, 1
+	add $t1,$t1,$t3
+	sw $t1,0($sp)
+	j iter0
+nextl0:
+	li $v0 4
+	la $a0,	str1 
+	syscall
+	lw $a0 -16($sp)
+	li $v0,1 
+	syscall
+	li $a0,10
+	li $v0,11 
+	syscall
+	li $v0,10
+	syscall

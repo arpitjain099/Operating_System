@@ -1,0 +1,5670 @@
+Terminals unused in grammar
+
+   DEFINE
+   signed_int
+   REL_OP
+   LOGICAL
+   CHAR_DATA
+   QUOTE
+   POINTERARROW
+   QUEST
+   BACKSLASH
+   SQUAREOPENBRACKET
+   SQUARECLOSEBRACKET
+   THEN
+   TYPEDEF
+   BREAK
+   DEFAULT
+   none
+   TABSPACE
+
+
+State 100 conflicts: 1 shift/reduce
+State 128 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: start_main $end
+
+    1 start_main: start_1
+
+    2 start_1: Macros start_2
+    3        | Macros
+    4        | /* empty */
+
+    5 Macros: HASH INCLUDE LESST IDENTIFIER DOT IDENTIFIER GREAT Macros1
+    6       | HASH INCLUDE STRINGLITERAL Macros1
+
+    7 Macros1: Macros
+    8        | /* empty */
+
+    9 start_2: Function start_2
+   10        | Function start_1
+   11        | Declaration1 start_2
+
+   12 @1: /* empty */
+
+   13 $@2: /* empty */
+
+   14 Function: TYPE MAIN PARENOPEN @1 Arg_List $@2 PARENCLOSE Compound_State
+
+   15 @3: /* empty */
+
+   16 $@4: /* empty */
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE
+
+   18 Arg_List: Arg_List COMMA Arg
+   19         | Arg
+   20         | /* empty */
+   21         | Arg_List error Arg
+
+   22 Arg: TYPE IDENTIFIER
+
+   23 TYPE: INTEGER
+   24     | FLOAT
+   25     | CHARACTER
+   26     | DOUBLE
+   27     | VOLATILE
+   28     | SIGNED INTEGER
+   29     | UNSIGNED INTEGER
+   30     | SIGNED SHORT
+   31     | SIGNED LONG
+   32     | UNSIGNED SHORT
+   33     | UNSIGNED LONG
+   34     | LONG
+   35     | SHORT
+   36     | BOOLEAN
+   37     | CONST INTEGER
+   38     | CONST FLOAT
+   39     | CONST CHARACTER
+   40     | VOID
+   41     | STRUCT IDENTIFIER
+   42     | ENUM IDENTIFIER
+
+   43 NUM: SIGN_SHORT
+   44    | UNSIGN_SHORT
+   45    | SIGN_LONG
+   46    | UNSIGN_LONG
+   47    | SIGN_INT
+   48    | UNSIGN_INT
+   49    | FLOAT_DATA
+
+   50 Declaration1: TYPE Assignment SEMICOLON
+   51             | Assignment SEMICOLON
+   52             | Function_Call SEMICOLON
+   53             | Struct_State SEMICOLON
+   54             | Enum_State SEMICOLON
+
+   55 id_declarator: IDENTIFIER
+
+   56 marker: /* empty */
+
+   57 type_marker: /* empty */
+
+   58 Assignment: Assignment EQUALTO Assignment
+   59           | Assignment EQUALTO Function_Call
+   60           | NUM
+   61           | id_declarator
+   62           | Assignment COMMA type_marker Assignment
+   63           | Assignment PLUS marker Assignment
+   64           | Assignment MINUS marker Assignment
+   65           | Assignment ASTERISK marker Assignment
+   66           | Assignment DIV marker Assignment
+   67           | Assignment MOD marker Assignment
+   68           | Assignment INCR
+   69           | Assignment DECR
+   70           | INCR Assignment
+   71           | DECR Assignment
+   72           | Assignment BINARYONESCOMPLEMENT Assignment
+   73           | Assignment BINARYAND Assignment
+   74           | Assignment BINARYOR Assignment
+   75           | Assignment BINARYXOR Assignment
+   76           | Assignment LSHIFT Assignment
+   77           | Assignment RSHIFT Assignment
+   78           | PARENOPEN Assignment PARENCLOSE
+   79           | MINUS Assignment
+   80           | PLUS Assignment
+
+   81 Expr: PARENOPEN Expr PARENCLOSE
+   82     | Expr LEQ Expr
+   83     | Expr GEQ Expr
+   84     | Expr GREAT Expr
+   85     | Expr LESST Expr
+   86     | Expr NOTEQ Expr
+   87     | Expr IFEQUAL Expr
+   88     | Expr NOTEQ1 Expr
+   89     | Expr OR Expr
+   90     | Expr AND Expr
+   91     | Expr PLUSEQ Expr
+   92     | Expr MINUSEQ Expr
+   93     | Expr DIVEQ Expr
+   94     | Expr MULEQ Expr
+   95     | Expr LSHIFTEQ Expr
+   96     | Expr RSHIFTEQ Expr
+   97     | Expr BITANDEQ Expr
+   98     | Expr BITOREQ Expr
+   99     | Expr BITXOREQ Expr
+  100     | Expr MODEQ Expr
+  101     | NOT Expr
+  102     | BINARYONESCOMPLEMENT Expr
+  103     | Assignment
+  104     | /* empty */
+
+  105 Expr_Loop: Expr_Loop COMMA Expr
+  106          | Expr
+
+  107 Function_Call: IDENTIFIER PARENOPEN Expr_Loop PARENCLOSE
+
+  108 While_State: WHILE PARENOPEN marker Expr PARENCLOSE Compound_State
+
+  109 Do_While_State: DO Compound_State WHILE PARENOPEN marker Expr PARENCLOSE
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+  111 Case_State: CASE CONST COLON State_List
+
+  112 Case_List: Case_List Case_State
+  113          | Case_State
+
+  114 Case_Compd: BRACEOPEN Case_List BRACECLOSE
+
+  115 Switch_State: SWITCH PARENOPEN Expr PARENCLOSE Case_Compd
+
+  116 Assign_List: Assign_List TYPE id_declarator SEMICOLON
+  117            | /* empty */
+
+  118 $@5: /* empty */
+
+  119 Struct_State: STRUCT IDENTIFIER BRACEOPEN $@5 Assign_List BRACECLOSE
+
+  120 $@6: /* empty */
+
+  121 Enum_State: ENUM BRACEOPEN $@6 enumerator_list BRACECLOSE
+
+  122 @7: /* empty */
+
+  123 $@8: /* empty */
+
+  124 Enum_State: ENUM IDENTIFIER @7 BRACEOPEN $@8 enumerator_list BRACECLOSE
+  125           | ENUM IDENTIFIER
+
+  126 enumerator_list: enumerator
+  127                | enumerator_list COMMA enumerator
+
+  128 enumerator: IDENTIFIER
+  129           | IDENTIFIER EQUALTO NUM
+
+  130 Print_Funct: PRINTF PARENOPEN STRINGLITERAL PARENCLOSE SEMICOLON
+  131            | PRINTF PARENOPEN argt COMMA marker id_declarator PARENCLOSE SEMICOLON
+
+  132 argt: PD
+  133     | PF
+
+  134 State: While_State
+  135      | Declaration1
+  136      | For_State
+  137      | Switch_State
+  138      | Print_Funct
+  139      | Do_While_State SEMICOLON
+  140      | CONTINUE SEMICOLON
+  141      | RETURN Expr SEMICOLON
+
+  142 $@9: /* empty */
+
+  143 Compound_State: BRACEOPEN $@9 State_List BRACECLOSE
+
+  144 State_List: State_List Stmt
+  145           | /* empty */
+
+  146 $@10: /* empty */
+
+  147 Stmt: IF PARENOPEN marker Expr PARENCLOSE $@10 Compound_State ELSE_OPTIONAL
+  148     | State
+  149     | Compound_State
+
+  150 ELSE_OPTIONAL: ELSE Stmt
+  151              | /* empty */
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256) 21
+MAIN (258) 14
+CONTINUE (259) 140
+ASTERISK (260) 65
+BOOLEAN (261) 36
+PRINTF (262) 130 131
+DEFINE (263)
+INCR (264) 68 70
+DECR (265) 69 71
+MOD (266) 67
+PD (267) 132
+PF (268) 133
+PLUS (269) 63 80
+MINUS (270) 64 79
+DIV (271) 66
+signed_int (272)
+REL_OP (273)
+INTEGER (274) 23 28 29 37
+LOGICAL (275)
+CHARACTER (276) 25 39
+CHAR_DATA (277)
+STRINGLITERAL (278) 6 130
+FLOAT (279) 24 38
+DOUBLE (280) 26
+LONG (281) 31 33 34
+SHORT (282) 30 32 35
+VOLATILE (283) 27
+SIGNED (284) 28 30 31
+VOID (285) 40
+CONST (286) 37 38 39 111
+BINARYXOR (287) 75
+EQUALTO (288) 58 59 129
+BINARYONESCOMPLEMENT (289) 72 102
+QUOTE (290)
+COLON (291) 111
+BINARYAND (292) 73
+BINARYOR (293) 74
+DOT (294) 5
+SEMICOLON (295) 50 51 52 53 54 110 116 130 131 139 140 141
+COMMA (296) 18 62 105 127 131
+AND (297) 90
+OR (298) 89
+LSHIFT (299) 76
+RSHIFT (300) 77
+PLUSEQ (301) 91
+MINUSEQ (302) 92
+MULEQ (303) 94
+DIVEQ (304) 93
+BITANDEQ (305) 97
+BITOREQ (306) 98
+BITXOREQ (307) 99
+MODEQ (308) 100
+LSHIFTEQ (309) 95
+RSHIFTEQ (310) 96
+POINTERARROW (311)
+NOT (312) 101
+NOTEQ1 (313) 88
+QUEST (314)
+BACKSLASH (315)
+PARENCLOSE (316) 14 17 78 81 107 108 109 110 115 130 131 147
+PARENOPEN (317) 14 17 78 81 107 108 109 110 115 130 131 147
+SQUAREOPENBRACKET (318)
+SQUARECLOSEBRACKET (319)
+BRACECLOSE (320) 17 114 119 121 124 143
+BRACEOPEN (321) 17 114 119 121 124 143
+HASH (322) 5 6
+IF (323) 147
+ELSE (324) 150
+THEN (325)
+WHILE (326) 108 109
+FOR (327) 110
+INCLUDE (328) 5 6
+TYPEDEF (329)
+BREAK (330)
+SWITCH (331) 115
+ENUM (332) 42 121 124 125
+STRUCT (333) 41 119
+DO (334) 109
+DEFAULT (335)
+none (336)
+CASE (337) 111
+IDENTIFIER (338) 5 17 22 41 42 55 107 119 124 125 128 129
+IFEQUAL (339) 87
+RETURN (340) 141
+UNSIGNED (341) 29 32 33
+SIGN_SHORT (342) 43
+UNSIGN_SHORT (343) 44
+SIGN_LONG (344) 45
+UNSIGN_LONG (345) 46
+SIGN_INT (346) 47
+UNSIGN_INT (347) 48
+FLOAT_DATA (348) 49
+TABSPACE (349)
+NOTEQ (350) 86
+GEQ (351) 83
+LEQ (352) 82
+GREAT (353) 5 84
+LESST (354) 5 85
+UPLUS (355)
+PDECR (356)
+PINCR (357)
+UMINUS (358)
+
+
+Nonterminals, with rules where they appear
+
+$accept (104)
+    on left: 0
+start_main (105)
+    on left: 1, on right: 0
+start_1 (106)
+    on left: 2 3 4, on right: 1 10
+Macros (107)
+    on left: 5 6, on right: 2 3 7
+Macros1 (108)
+    on left: 7 8, on right: 5 6
+start_2 (109)
+    on left: 9 10 11, on right: 2 9 11
+Function (110)
+    on left: 14 17, on right: 9 10
+@1 (111)
+    on left: 12, on right: 14
+$@2 (112)
+    on left: 13, on right: 14
+@3 (113)
+    on left: 15, on right: 17
+$@4 (114)
+    on left: 16, on right: 17
+Arg_List (115)
+    on left: 18 19 20 21, on right: 14 17 18 21
+Arg (116)
+    on left: 22, on right: 18 19 21
+TYPE (117)
+    on left: 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40
+    41 42, on right: 14 17 22 50 116
+NUM (118)
+    on left: 43 44 45 46 47 48 49, on right: 60 129
+Declaration1 (119)
+    on left: 50 51 52 53 54, on right: 11 135
+id_declarator (120)
+    on left: 55, on right: 61 116 131
+marker (121)
+    on left: 56, on right: 63 64 65 66 67 108 109 110 131 147
+type_marker (122)
+    on left: 57, on right: 62
+Assignment (123)
+    on left: 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75
+    76 77 78 79 80, on right: 50 51 58 59 62 63 64 65 66 67 68 69 70
+    71 72 73 74 75 76 77 78 79 80 103
+Expr (124)
+    on left: 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98
+    99 100 101 102 103 104, on right: 81 82 83 84 85 86 87 88 89 90
+    91 92 93 94 95 96 97 98 99 100 101 102 105 106 108 109 110 115
+    141 147
+Expr_Loop (125)
+    on left: 105 106, on right: 105 107 110
+Function_Call (126)
+    on left: 107, on right: 52 59
+While_State (127)
+    on left: 108, on right: 134
+Do_While_State (128)
+    on left: 109, on right: 139
+For_State (129)
+    on left: 110, on right: 136
+Case_State (130)
+    on left: 111, on right: 112 113
+Case_List (131)
+    on left: 112 113, on right: 112 114
+Case_Compd (132)
+    on left: 114, on right: 115
+Switch_State (133)
+    on left: 115, on right: 137
+Assign_List (134)
+    on left: 116 117, on right: 116 119
+Struct_State (135)
+    on left: 119, on right: 53
+$@5 (136)
+    on left: 118, on right: 119
+Enum_State (137)
+    on left: 121 124 125, on right: 54
+$@6 (138)
+    on left: 120, on right: 121
+@7 (139)
+    on left: 122, on right: 124
+$@8 (140)
+    on left: 123, on right: 124
+enumerator_list (141)
+    on left: 126 127, on right: 121 124 127
+enumerator (142)
+    on left: 128 129, on right: 126 127
+Print_Funct (143)
+    on left: 130 131, on right: 138
+argt (144)
+    on left: 132 133, on right: 131
+State (145)
+    on left: 134 135 136 137 138 139 140 141, on right: 148
+Compound_State (146)
+    on left: 143, on right: 14 108 109 110 147 149
+$@9 (147)
+    on left: 142, on right: 143
+State_List (148)
+    on left: 144 145, on right: 17 111 143 144
+Stmt (149)
+    on left: 147 148 149, on right: 144 150
+$@10 (150)
+    on left: 146, on right: 147
+ELSE_OPTIONAL (151)
+    on left: 150 151, on right: 147
+
+
+state 0
+
+    0 $accept: . start_main $end
+
+    HASH  shift, and go to state 1
+
+    $default  reduce using rule 4 (start_1)
+
+    start_main  go to state 2
+    start_1     go to state 3
+    Macros      go to state 4
+
+
+state 1
+
+    5 Macros: HASH . INCLUDE LESST IDENTIFIER DOT IDENTIFIER GREAT Macros1
+    6       | HASH . INCLUDE STRINGLITERAL Macros1
+
+    INCLUDE  shift, and go to state 5
+
+
+state 2
+
+    0 $accept: start_main . $end
+
+    $end  shift, and go to state 6
+
+
+state 3
+
+    1 start_main: start_1 .
+
+    $default  reduce using rule 1 (start_main)
+
+
+state 4
+
+    2 start_1: Macros . start_2
+    3        | Macros .
+
+    BOOLEAN       shift, and go to state 7
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    IDENTIFIER    shift, and go to state 25
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    $default  reduce using rule 3 (start_1)
+
+    start_2        go to state 34
+    Function       go to state 35
+    TYPE           go to state 36
+    NUM            go to state 37
+    Declaration1   go to state 38
+    id_declarator  go to state 39
+    Assignment     go to state 40
+    Function_Call  go to state 41
+    Struct_State   go to state 42
+    Enum_State     go to state 43
+
+
+state 5
+
+    5 Macros: HASH INCLUDE . LESST IDENTIFIER DOT IDENTIFIER GREAT Macros1
+    6       | HASH INCLUDE . STRINGLITERAL Macros1
+
+    STRINGLITERAL  shift, and go to state 44
+    LESST          shift, and go to state 45
+
+
+state 6
+
+    0 $accept: start_main $end .
+
+    $default  accept
+
+
+state 7
+
+   36 TYPE: BOOLEAN .
+
+    $default  reduce using rule 36 (TYPE)
+
+
+state 8
+
+   70 Assignment: INCR . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 47
+
+
+state 9
+
+   71 Assignment: DECR . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 48
+
+
+state 10
+
+   80 Assignment: PLUS . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 49
+
+
+state 11
+
+   79 Assignment: MINUS . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 50
+
+
+state 12
+
+   23 TYPE: INTEGER .
+
+    $default  reduce using rule 23 (TYPE)
+
+
+state 13
+
+   25 TYPE: CHARACTER .
+
+    $default  reduce using rule 25 (TYPE)
+
+
+state 14
+
+   24 TYPE: FLOAT .
+
+    $default  reduce using rule 24 (TYPE)
+
+
+state 15
+
+   26 TYPE: DOUBLE .
+
+    $default  reduce using rule 26 (TYPE)
+
+
+state 16
+
+   34 TYPE: LONG .
+
+    $default  reduce using rule 34 (TYPE)
+
+
+state 17
+
+   35 TYPE: SHORT .
+
+    $default  reduce using rule 35 (TYPE)
+
+
+state 18
+
+   27 TYPE: VOLATILE .
+
+    $default  reduce using rule 27 (TYPE)
+
+
+state 19
+
+   28 TYPE: SIGNED . INTEGER
+   30     | SIGNED . SHORT
+   31     | SIGNED . LONG
+
+    INTEGER  shift, and go to state 51
+    LONG     shift, and go to state 52
+    SHORT    shift, and go to state 53
+
+
+state 20
+
+   40 TYPE: VOID .
+
+    $default  reduce using rule 40 (TYPE)
+
+
+state 21
+
+   37 TYPE: CONST . INTEGER
+   38     | CONST . FLOAT
+   39     | CONST . CHARACTER
+
+    INTEGER    shift, and go to state 54
+    CHARACTER  shift, and go to state 55
+    FLOAT      shift, and go to state 56
+
+
+state 22
+
+   78 Assignment: PARENOPEN . Assignment PARENCLOSE
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 57
+
+
+state 23
+
+   42 TYPE: ENUM . IDENTIFIER
+  121 Enum_State: ENUM . BRACEOPEN $@6 enumerator_list BRACECLOSE
+  124           | ENUM . IDENTIFIER @7 BRACEOPEN $@8 enumerator_list BRACECLOSE
+  125           | ENUM . IDENTIFIER
+
+    BRACEOPEN   shift, and go to state 58
+    IDENTIFIER  shift, and go to state 59
+
+
+state 24
+
+   41 TYPE: STRUCT . IDENTIFIER
+  119 Struct_State: STRUCT . IDENTIFIER BRACEOPEN $@5 Assign_List BRACECLOSE
+
+    IDENTIFIER  shift, and go to state 60
+
+
+state 25
+
+   55 id_declarator: IDENTIFIER .
+  107 Function_Call: IDENTIFIER . PARENOPEN Expr_Loop PARENCLOSE
+
+    PARENOPEN  shift, and go to state 61
+
+    $default  reduce using rule 55 (id_declarator)
+
+
+state 26
+
+   29 TYPE: UNSIGNED . INTEGER
+   32     | UNSIGNED . SHORT
+   33     | UNSIGNED . LONG
+
+    INTEGER  shift, and go to state 62
+    LONG     shift, and go to state 63
+    SHORT    shift, and go to state 64
+
+
+state 27
+
+   43 NUM: SIGN_SHORT .
+
+    $default  reduce using rule 43 (NUM)
+
+
+state 28
+
+   44 NUM: UNSIGN_SHORT .
+
+    $default  reduce using rule 44 (NUM)
+
+
+state 29
+
+   45 NUM: SIGN_LONG .
+
+    $default  reduce using rule 45 (NUM)
+
+
+state 30
+
+   46 NUM: UNSIGN_LONG .
+
+    $default  reduce using rule 46 (NUM)
+
+
+state 31
+
+   47 NUM: SIGN_INT .
+
+    $default  reduce using rule 47 (NUM)
+
+
+state 32
+
+   48 NUM: UNSIGN_INT .
+
+    $default  reduce using rule 48 (NUM)
+
+
+state 33
+
+   49 NUM: FLOAT_DATA .
+
+    $default  reduce using rule 49 (NUM)
+
+
+state 34
+
+    2 start_1: Macros start_2 .
+
+    $default  reduce using rule 2 (start_1)
+
+
+state 35
+
+    9 start_2: Function . start_2
+   10        | Function . start_1
+
+    BOOLEAN       shift, and go to state 7
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    HASH          shift, and go to state 1
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    IDENTIFIER    shift, and go to state 25
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    $default  reduce using rule 4 (start_1)
+
+    start_1        go to state 65
+    Macros         go to state 4
+    start_2        go to state 66
+    Function       go to state 35
+    TYPE           go to state 36
+    NUM            go to state 37
+    Declaration1   go to state 38
+    id_declarator  go to state 39
+    Assignment     go to state 40
+    Function_Call  go to state 41
+    Struct_State   go to state 42
+    Enum_State     go to state 43
+
+
+state 36
+
+   14 Function: TYPE . MAIN PARENOPEN @1 Arg_List $@2 PARENCLOSE Compound_State
+   17         | TYPE . IDENTIFIER PARENOPEN @3 Arg_List $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE
+   50 Declaration1: TYPE . Assignment SEMICOLON
+
+    MAIN          shift, and go to state 67
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 68
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 69
+
+
+state 37
+
+   60 Assignment: NUM .
+
+    $default  reduce using rule 60 (Assignment)
+
+
+state 38
+
+   11 start_2: Declaration1 . start_2
+
+    BOOLEAN       shift, and go to state 7
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    IDENTIFIER    shift, and go to state 25
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    start_2        go to state 70
+    Function       go to state 35
+    TYPE           go to state 36
+    NUM            go to state 37
+    Declaration1   go to state 38
+    id_declarator  go to state 39
+    Assignment     go to state 40
+    Function_Call  go to state 41
+    Struct_State   go to state 42
+    Enum_State     go to state 43
+
+
+state 39
+
+   61 Assignment: id_declarator .
+
+    $default  reduce using rule 61 (Assignment)
+
+
+state 40
+
+   51 Declaration1: Assignment . SEMICOLON
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    SEMICOLON             shift, and go to state 83
+    COMMA                 shift, and go to state 84
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+
+state 41
+
+   52 Declaration1: Function_Call . SEMICOLON
+
+    SEMICOLON  shift, and go to state 87
+
+
+state 42
+
+   53 Declaration1: Struct_State . SEMICOLON
+
+    SEMICOLON  shift, and go to state 88
+
+
+state 43
+
+   54 Declaration1: Enum_State . SEMICOLON
+
+    SEMICOLON  shift, and go to state 89
+
+
+state 44
+
+    6 Macros: HASH INCLUDE STRINGLITERAL . Macros1
+
+    HASH  shift, and go to state 1
+
+    $default  reduce using rule 8 (Macros1)
+
+    Macros   go to state 90
+    Macros1  go to state 91
+
+
+state 45
+
+    5 Macros: HASH INCLUDE LESST . IDENTIFIER DOT IDENTIFIER GREAT Macros1
+
+    IDENTIFIER  shift, and go to state 92
+
+
+state 46
+
+   55 id_declarator: IDENTIFIER .
+
+    $default  reduce using rule 55 (id_declarator)
+
+
+state 47
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   70           | INCR Assignment .
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 70 (Assignment)
+
+
+state 48
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   71           | DECR Assignment .
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 71 (Assignment)
+
+
+state 49
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+   80           | PLUS Assignment .
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 80 (Assignment)
+
+
+state 50
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+   79           | MINUS Assignment .
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 79 (Assignment)
+
+
+state 51
+
+   28 TYPE: SIGNED INTEGER .
+
+    $default  reduce using rule 28 (TYPE)
+
+
+state 52
+
+   31 TYPE: SIGNED LONG .
+
+    $default  reduce using rule 31 (TYPE)
+
+
+state 53
+
+   30 TYPE: SIGNED SHORT .
+
+    $default  reduce using rule 30 (TYPE)
+
+
+state 54
+
+   37 TYPE: CONST INTEGER .
+
+    $default  reduce using rule 37 (TYPE)
+
+
+state 55
+
+   39 TYPE: CONST CHARACTER .
+
+    $default  reduce using rule 39 (TYPE)
+
+
+state 56
+
+   38 TYPE: CONST FLOAT .
+
+    $default  reduce using rule 38 (TYPE)
+
+
+state 57
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+   78           | PARENOPEN Assignment . PARENCLOSE
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    COMMA                 shift, and go to state 84
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+    PARENCLOSE            shift, and go to state 93
+
+
+state 58
+
+  121 Enum_State: ENUM BRACEOPEN . $@6 enumerator_list BRACECLOSE
+
+    $default  reduce using rule 120 ($@6)
+
+    $@6  go to state 94
+
+
+state 59
+
+   42 TYPE: ENUM IDENTIFIER .
+  124 Enum_State: ENUM IDENTIFIER . @7 BRACEOPEN $@8 enumerator_list BRACECLOSE
+  125           | ENUM IDENTIFIER .
+
+    SEMICOLON  reduce using rule 125 (Enum_State)
+    BRACEOPEN  reduce using rule 122 (@7)
+    $default   reduce using rule 42 (TYPE)
+
+    @7  go to state 95
+
+
+state 60
+
+   41 TYPE: STRUCT IDENTIFIER .
+  119 Struct_State: STRUCT IDENTIFIER . BRACEOPEN $@5 Assign_List BRACECLOSE
+
+    BRACEOPEN  shift, and go to state 96
+
+    $default  reduce using rule 41 (TYPE)
+
+
+state 61
+
+  107 Function_Call: IDENTIFIER PARENOPEN . Expr_Loop PARENCLOSE
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 101
+    Expr_Loop      go to state 102
+
+
+state 62
+
+   29 TYPE: UNSIGNED INTEGER .
+
+    $default  reduce using rule 29 (TYPE)
+
+
+state 63
+
+   33 TYPE: UNSIGNED LONG .
+
+    $default  reduce using rule 33 (TYPE)
+
+
+state 64
+
+   32 TYPE: UNSIGNED SHORT .
+
+    $default  reduce using rule 32 (TYPE)
+
+
+state 65
+
+   10 start_2: Function start_1 .
+
+    $default  reduce using rule 10 (start_2)
+
+
+state 66
+
+    9 start_2: Function start_2 .
+
+    $default  reduce using rule 9 (start_2)
+
+
+state 67
+
+   14 Function: TYPE MAIN . PARENOPEN @1 Arg_List $@2 PARENCLOSE Compound_State
+
+    PARENOPEN  shift, and go to state 103
+
+
+state 68
+
+   17 Function: TYPE IDENTIFIER . PARENOPEN @3 Arg_List $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE
+   55 id_declarator: IDENTIFIER .
+
+    PARENOPEN  shift, and go to state 104
+
+    $default  reduce using rule 55 (id_declarator)
+
+
+state 69
+
+   50 Declaration1: TYPE Assignment . SEMICOLON
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    SEMICOLON             shift, and go to state 105
+    COMMA                 shift, and go to state 84
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+
+state 70
+
+   11 start_2: Declaration1 start_2 .
+
+    $default  reduce using rule 11 (start_2)
+
+
+state 71
+
+   65 Assignment: Assignment ASTERISK . marker Assignment
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 106
+
+
+state 72
+
+   68 Assignment: Assignment INCR .
+
+    $default  reduce using rule 68 (Assignment)
+
+
+state 73
+
+   69 Assignment: Assignment DECR .
+
+    $default  reduce using rule 69 (Assignment)
+
+
+state 74
+
+   67 Assignment: Assignment MOD . marker Assignment
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 107
+
+
+state 75
+
+   63 Assignment: Assignment PLUS . marker Assignment
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 108
+
+
+state 76
+
+   64 Assignment: Assignment MINUS . marker Assignment
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 109
+
+
+state 77
+
+   66 Assignment: Assignment DIV . marker Assignment
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 110
+
+
+state 78
+
+   75 Assignment: Assignment BINARYXOR . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 111
+
+
+state 79
+
+   58 Assignment: Assignment EQUALTO . Assignment
+   59           | Assignment EQUALTO . Function_Call
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 25
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 112
+    Function_Call  go to state 113
+
+
+state 80
+
+   72 Assignment: Assignment BINARYONESCOMPLEMENT . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 114
+
+
+state 81
+
+   73 Assignment: Assignment BINARYAND . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 115
+
+
+state 82
+
+   74 Assignment: Assignment BINARYOR . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 116
+
+
+state 83
+
+   51 Declaration1: Assignment SEMICOLON .
+
+    $default  reduce using rule 51 (Declaration1)
+
+
+state 84
+
+   62 Assignment: Assignment COMMA . type_marker Assignment
+
+    $default  reduce using rule 57 (type_marker)
+
+    type_marker  go to state 117
+
+
+state 85
+
+   76 Assignment: Assignment LSHIFT . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 118
+
+
+state 86
+
+   77 Assignment: Assignment RSHIFT . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 119
+
+
+state 87
+
+   52 Declaration1: Function_Call SEMICOLON .
+
+    $default  reduce using rule 52 (Declaration1)
+
+
+state 88
+
+   53 Declaration1: Struct_State SEMICOLON .
+
+    $default  reduce using rule 53 (Declaration1)
+
+
+state 89
+
+   54 Declaration1: Enum_State SEMICOLON .
+
+    $default  reduce using rule 54 (Declaration1)
+
+
+state 90
+
+    7 Macros1: Macros .
+
+    $default  reduce using rule 7 (Macros1)
+
+
+state 91
+
+    6 Macros: HASH INCLUDE STRINGLITERAL Macros1 .
+
+    $default  reduce using rule 6 (Macros)
+
+
+state 92
+
+    5 Macros: HASH INCLUDE LESST IDENTIFIER . DOT IDENTIFIER GREAT Macros1
+
+    DOT  shift, and go to state 120
+
+
+state 93
+
+   78 Assignment: PARENOPEN Assignment PARENCLOSE .
+
+    $default  reduce using rule 78 (Assignment)
+
+
+state 94
+
+  121 Enum_State: ENUM BRACEOPEN $@6 . enumerator_list BRACECLOSE
+
+    IDENTIFIER  shift, and go to state 121
+
+    enumerator_list  go to state 122
+    enumerator       go to state 123
+
+
+state 95
+
+  124 Enum_State: ENUM IDENTIFIER @7 . BRACEOPEN $@8 enumerator_list BRACECLOSE
+
+    BRACEOPEN  shift, and go to state 124
+
+
+state 96
+
+  119 Struct_State: STRUCT IDENTIFIER BRACEOPEN . $@5 Assign_List BRACECLOSE
+
+    $default  reduce using rule 118 ($@5)
+
+    $@5  go to state 125
+
+
+state 97
+
+  102 Expr: BINARYONESCOMPLEMENT . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 126
+
+
+state 98
+
+  101 Expr: NOT . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 127
+
+
+state 99
+
+   78 Assignment: PARENOPEN . Assignment PARENCLOSE
+   81 Expr: PARENOPEN . Expr PARENCLOSE
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 128
+    Expr           go to state 129
+
+
+state 100
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+  103 Expr: Assignment .
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    COMMA                 shift, and go to state 84
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+    COMMA     [reduce using rule 103 (Expr)]
+    $default  reduce using rule 103 (Expr)
+
+
+state 101
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  106 Expr_Loop: Expr .
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 106 (Expr_Loop)
+
+
+state 102
+
+  105 Expr_Loop: Expr_Loop . COMMA Expr
+  107 Function_Call: IDENTIFIER PARENOPEN Expr_Loop . PARENCLOSE
+
+    COMMA       shift, and go to state 149
+    PARENCLOSE  shift, and go to state 150
+
+
+state 103
+
+   14 Function: TYPE MAIN PARENOPEN . @1 Arg_List $@2 PARENCLOSE Compound_State
+
+    $default  reduce using rule 12 (@1)
+
+    @1  go to state 151
+
+
+state 104
+
+   17 Function: TYPE IDENTIFIER PARENOPEN . @3 Arg_List $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE
+
+    $default  reduce using rule 15 (@3)
+
+    @3  go to state 152
+
+
+state 105
+
+   50 Declaration1: TYPE Assignment SEMICOLON .
+
+    $default  reduce using rule 50 (Declaration1)
+
+
+state 106
+
+   65 Assignment: Assignment ASTERISK marker . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 153
+
+
+state 107
+
+   67 Assignment: Assignment MOD marker . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 154
+
+
+state 108
+
+   63 Assignment: Assignment PLUS marker . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 155
+
+
+state 109
+
+   64 Assignment: Assignment MINUS marker . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 156
+
+
+state 110
+
+   66 Assignment: Assignment DIV marker . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 157
+
+
+state 111
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   75           | Assignment BINARYXOR Assignment .
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+    $default  reduce using rule 75 (Assignment)
+
+
+state 112
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   58           | Assignment EQUALTO Assignment .
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+    $default  reduce using rule 58 (Assignment)
+
+
+state 113
+
+   59 Assignment: Assignment EQUALTO Function_Call .
+
+    $default  reduce using rule 59 (Assignment)
+
+
+state 114
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   72           | Assignment BINARYONESCOMPLEMENT Assignment .
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 72 (Assignment)
+
+
+state 115
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   73           | Assignment BINARYAND Assignment .
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+    $default  reduce using rule 73 (Assignment)
+
+
+state 116
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   74           | Assignment BINARYOR Assignment .
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+    $default  reduce using rule 74 (Assignment)
+
+
+state 117
+
+   62 Assignment: Assignment COMMA type_marker . Assignment
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 158
+
+
+state 118
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   76           | Assignment LSHIFT Assignment .
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 76 (Assignment)
+
+
+state 119
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+   77           | Assignment RSHIFT Assignment .
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 77 (Assignment)
+
+
+state 120
+
+    5 Macros: HASH INCLUDE LESST IDENTIFIER DOT . IDENTIFIER GREAT Macros1
+
+    IDENTIFIER  shift, and go to state 159
+
+
+state 121
+
+  128 enumerator: IDENTIFIER .
+  129           | IDENTIFIER . EQUALTO NUM
+
+    EQUALTO  shift, and go to state 160
+
+    $default  reduce using rule 128 (enumerator)
+
+
+state 122
+
+  121 Enum_State: ENUM BRACEOPEN $@6 enumerator_list . BRACECLOSE
+  127 enumerator_list: enumerator_list . COMMA enumerator
+
+    COMMA       shift, and go to state 161
+    BRACECLOSE  shift, and go to state 162
+
+
+state 123
+
+  126 enumerator_list: enumerator .
+
+    $default  reduce using rule 126 (enumerator_list)
+
+
+state 124
+
+  124 Enum_State: ENUM IDENTIFIER @7 BRACEOPEN . $@8 enumerator_list BRACECLOSE
+
+    $default  reduce using rule 123 ($@8)
+
+    $@8  go to state 163
+
+
+state 125
+
+  119 Struct_State: STRUCT IDENTIFIER BRACEOPEN $@5 . Assign_List BRACECLOSE
+
+    $default  reduce using rule 117 (Assign_List)
+
+    Assign_List  go to state 164
+
+
+state 126
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  102     | BINARYONESCOMPLEMENT Expr .
+
+    $default  reduce using rule 102 (Expr)
+
+
+state 127
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  101     | NOT Expr .
+
+    $default  reduce using rule 101 (Expr)
+
+
+state 128
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+   78           | PARENOPEN Assignment . PARENCLOSE
+  103 Expr: Assignment .
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    COMMA                 shift, and go to state 84
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+    PARENCLOSE            shift, and go to state 93
+
+    PARENCLOSE  [reduce using rule 103 (Expr)]
+    $default    reduce using rule 103 (Expr)
+
+
+state 129
+
+   81 Expr: PARENOPEN Expr . PARENCLOSE
+   82     | Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND         shift, and go to state 130
+    OR          shift, and go to state 131
+    PLUSEQ      shift, and go to state 132
+    MINUSEQ     shift, and go to state 133
+    MULEQ       shift, and go to state 134
+    DIVEQ       shift, and go to state 135
+    BITANDEQ    shift, and go to state 136
+    BITOREQ     shift, and go to state 137
+    BITXOREQ    shift, and go to state 138
+    MODEQ       shift, and go to state 139
+    LSHIFTEQ    shift, and go to state 140
+    RSHIFTEQ    shift, and go to state 141
+    NOTEQ1      shift, and go to state 142
+    PARENCLOSE  shift, and go to state 165
+    IFEQUAL     shift, and go to state 143
+    NOTEQ       shift, and go to state 144
+    GEQ         shift, and go to state 145
+    LEQ         shift, and go to state 146
+    GREAT       shift, and go to state 147
+    LESST       shift, and go to state 148
+
+
+state 130
+
+   90 Expr: Expr AND . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 166
+
+
+state 131
+
+   89 Expr: Expr OR . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 167
+
+
+state 132
+
+   91 Expr: Expr PLUSEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 168
+
+
+state 133
+
+   92 Expr: Expr MINUSEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 169
+
+
+state 134
+
+   94 Expr: Expr MULEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 170
+
+
+state 135
+
+   93 Expr: Expr DIVEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 171
+
+
+state 136
+
+   97 Expr: Expr BITANDEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 172
+
+
+state 137
+
+   98 Expr: Expr BITOREQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 173
+
+
+state 138
+
+   99 Expr: Expr BITXOREQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 174
+
+
+state 139
+
+  100 Expr: Expr MODEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 175
+
+
+state 140
+
+   95 Expr: Expr LSHIFTEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 176
+
+
+state 141
+
+   96 Expr: Expr RSHIFTEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 177
+
+
+state 142
+
+   88 Expr: Expr NOTEQ1 . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 178
+
+
+state 143
+
+   87 Expr: Expr IFEQUAL . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 179
+
+
+state 144
+
+   86 Expr: Expr NOTEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 180
+
+
+state 145
+
+   83 Expr: Expr GEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 181
+
+
+state 146
+
+   82 Expr: Expr LEQ . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 182
+
+
+state 147
+
+   84 Expr: Expr GREAT . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 183
+
+
+state 148
+
+   85 Expr: Expr LESST . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 184
+
+
+state 149
+
+  105 Expr_Loop: Expr_Loop COMMA . Expr
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 185
+
+
+state 150
+
+  107 Function_Call: IDENTIFIER PARENOPEN Expr_Loop PARENCLOSE .
+
+    $default  reduce using rule 107 (Function_Call)
+
+
+state 151
+
+   14 Function: TYPE MAIN PARENOPEN @1 . Arg_List $@2 PARENCLOSE Compound_State
+
+    BOOLEAN    shift, and go to state 7
+    INTEGER    shift, and go to state 12
+    CHARACTER  shift, and go to state 13
+    FLOAT      shift, and go to state 14
+    DOUBLE     shift, and go to state 15
+    LONG       shift, and go to state 16
+    SHORT      shift, and go to state 17
+    VOLATILE   shift, and go to state 18
+    SIGNED     shift, and go to state 19
+    VOID       shift, and go to state 20
+    CONST      shift, and go to state 21
+    ENUM       shift, and go to state 186
+    STRUCT     shift, and go to state 187
+    UNSIGNED   shift, and go to state 26
+
+    $default  reduce using rule 20 (Arg_List)
+
+    Arg_List  go to state 188
+    Arg       go to state 189
+    TYPE      go to state 190
+
+
+state 152
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 . Arg_List $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE
+
+    BOOLEAN    shift, and go to state 7
+    INTEGER    shift, and go to state 12
+    CHARACTER  shift, and go to state 13
+    FLOAT      shift, and go to state 14
+    DOUBLE     shift, and go to state 15
+    LONG       shift, and go to state 16
+    SHORT      shift, and go to state 17
+    VOLATILE   shift, and go to state 18
+    SIGNED     shift, and go to state 19
+    VOID       shift, and go to state 20
+    CONST      shift, and go to state 21
+    ENUM       shift, and go to state 186
+    STRUCT     shift, and go to state 187
+    UNSIGNED   shift, and go to state 26
+
+    $default  reduce using rule 20 (Arg_List)
+
+    Arg_List  go to state 191
+    Arg       go to state 189
+    TYPE      go to state 190
+
+
+state 153
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   65           | Assignment ASTERISK marker Assignment .
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 65 (Assignment)
+
+
+state 154
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   67           | Assignment MOD marker Assignment .
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 67 (Assignment)
+
+
+state 155
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   63           | Assignment PLUS marker Assignment .
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    DIV                   shift, and go to state 77
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 63 (Assignment)
+
+
+state 156
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   64           | Assignment MINUS marker Assignment .
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    DIV                   shift, and go to state 77
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 64 (Assignment)
+
+
+state 157
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   66           | Assignment DIV marker Assignment .
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+
+    $default  reduce using rule 66 (Assignment)
+
+
+state 158
+
+   58 Assignment: Assignment . EQUALTO Assignment
+   59           | Assignment . EQUALTO Function_Call
+   62           | Assignment . COMMA type_marker Assignment
+   62           | Assignment COMMA type_marker Assignment .
+   63           | Assignment . PLUS marker Assignment
+   64           | Assignment . MINUS marker Assignment
+   65           | Assignment . ASTERISK marker Assignment
+   66           | Assignment . DIV marker Assignment
+   67           | Assignment . MOD marker Assignment
+   68           | Assignment . INCR
+   69           | Assignment . DECR
+   72           | Assignment . BINARYONESCOMPLEMENT Assignment
+   73           | Assignment . BINARYAND Assignment
+   74           | Assignment . BINARYOR Assignment
+   75           | Assignment . BINARYXOR Assignment
+   76           | Assignment . LSHIFT Assignment
+   77           | Assignment . RSHIFT Assignment
+
+    ASTERISK              shift, and go to state 71
+    INCR                  shift, and go to state 72
+    DECR                  shift, and go to state 73
+    MOD                   shift, and go to state 74
+    PLUS                  shift, and go to state 75
+    MINUS                 shift, and go to state 76
+    DIV                   shift, and go to state 77
+    BINARYXOR             shift, and go to state 78
+    EQUALTO               shift, and go to state 79
+    BINARYONESCOMPLEMENT  shift, and go to state 80
+    BINARYAND             shift, and go to state 81
+    BINARYOR              shift, and go to state 82
+    LSHIFT                shift, and go to state 85
+    RSHIFT                shift, and go to state 86
+
+    $default  reduce using rule 62 (Assignment)
+
+
+state 159
+
+    5 Macros: HASH INCLUDE LESST IDENTIFIER DOT IDENTIFIER . GREAT Macros1
+
+    GREAT  shift, and go to state 192
+
+
+state 160
+
+  129 enumerator: IDENTIFIER EQUALTO . NUM
+
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM  go to state 193
+
+
+state 161
+
+  127 enumerator_list: enumerator_list COMMA . enumerator
+
+    IDENTIFIER  shift, and go to state 121
+
+    enumerator  go to state 194
+
+
+state 162
+
+  121 Enum_State: ENUM BRACEOPEN $@6 enumerator_list BRACECLOSE .
+
+    $default  reduce using rule 121 (Enum_State)
+
+
+state 163
+
+  124 Enum_State: ENUM IDENTIFIER @7 BRACEOPEN $@8 . enumerator_list BRACECLOSE
+
+    IDENTIFIER  shift, and go to state 121
+
+    enumerator_list  go to state 195
+    enumerator       go to state 123
+
+
+state 164
+
+  116 Assign_List: Assign_List . TYPE id_declarator SEMICOLON
+  119 Struct_State: STRUCT IDENTIFIER BRACEOPEN $@5 Assign_List . BRACECLOSE
+
+    BOOLEAN     shift, and go to state 7
+    INTEGER     shift, and go to state 12
+    CHARACTER   shift, and go to state 13
+    FLOAT       shift, and go to state 14
+    DOUBLE      shift, and go to state 15
+    LONG        shift, and go to state 16
+    SHORT       shift, and go to state 17
+    VOLATILE    shift, and go to state 18
+    SIGNED      shift, and go to state 19
+    VOID        shift, and go to state 20
+    CONST       shift, and go to state 21
+    BRACECLOSE  shift, and go to state 196
+    ENUM        shift, and go to state 186
+    STRUCT      shift, and go to state 187
+    UNSIGNED    shift, and go to state 26
+
+    TYPE  go to state 197
+
+
+state 165
+
+   81 Expr: PARENOPEN Expr PARENCLOSE .
+
+    $default  reduce using rule 81 (Expr)
+
+
+state 166
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   90     | Expr AND Expr .
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    NOTEQ1   shift, and go to state 142
+    IFEQUAL  shift, and go to state 143
+    NOTEQ    shift, and go to state 144
+    GEQ      shift, and go to state 145
+    LEQ      shift, and go to state 146
+    GREAT    shift, and go to state 147
+    LESST    shift, and go to state 148
+
+    $default  reduce using rule 90 (Expr)
+
+
+state 167
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   89     | Expr OR Expr .
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND      shift, and go to state 130
+    NOTEQ1   shift, and go to state 142
+    IFEQUAL  shift, and go to state 143
+    NOTEQ    shift, and go to state 144
+    GEQ      shift, and go to state 145
+    LEQ      shift, and go to state 146
+    GREAT    shift, and go to state 147
+    LESST    shift, and go to state 148
+
+    $default  reduce using rule 89 (Expr)
+
+
+state 168
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   91     | Expr PLUSEQ Expr .
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 91 (Expr)
+
+
+state 169
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   92     | Expr MINUSEQ Expr .
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 92 (Expr)
+
+
+state 170
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   94     | Expr MULEQ Expr .
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 94 (Expr)
+
+
+state 171
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   93     | Expr DIVEQ Expr .
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 93 (Expr)
+
+
+state 172
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   97     | Expr BITANDEQ Expr .
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 97 (Expr)
+
+
+state 173
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   98     | Expr BITOREQ Expr .
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 98 (Expr)
+
+
+state 174
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+   99     | Expr BITXOREQ Expr .
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 99 (Expr)
+
+
+state 175
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  100     | Expr MODEQ Expr .
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 100 (Expr)
+
+
+state 176
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   95     | Expr LSHIFTEQ Expr .
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 95 (Expr)
+
+
+state 177
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   96     | Expr RSHIFTEQ Expr .
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 96 (Expr)
+
+
+state 178
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   88     | Expr NOTEQ1 Expr .
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    GEQ    shift, and go to state 145
+    LEQ    shift, and go to state 146
+    GREAT  shift, and go to state 147
+    LESST  shift, and go to state 148
+
+    $default  reduce using rule 88 (Expr)
+
+
+state 179
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   87     | Expr IFEQUAL Expr .
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    GEQ    shift, and go to state 145
+    LEQ    shift, and go to state 146
+    GREAT  shift, and go to state 147
+    LESST  shift, and go to state 148
+
+    $default  reduce using rule 87 (Expr)
+
+
+state 180
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   86     | Expr NOTEQ Expr .
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    GEQ    shift, and go to state 145
+    LEQ    shift, and go to state 146
+    GREAT  shift, and go to state 147
+    LESST  shift, and go to state 148
+
+    $default  reduce using rule 86 (Expr)
+
+
+state 181
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   83     | Expr GEQ Expr .
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    $default  reduce using rule 83 (Expr)
+
+
+state 182
+
+   82 Expr: Expr . LEQ Expr
+   82     | Expr LEQ Expr .
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    $default  reduce using rule 82 (Expr)
+
+
+state 183
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   84     | Expr GREAT Expr .
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    $default  reduce using rule 84 (Expr)
+
+
+state 184
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   85     | Expr LESST Expr .
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+
+    $default  reduce using rule 85 (Expr)
+
+
+state 185
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  105 Expr_Loop: Expr_Loop COMMA Expr .
+
+    AND       shift, and go to state 130
+    OR        shift, and go to state 131
+    PLUSEQ    shift, and go to state 132
+    MINUSEQ   shift, and go to state 133
+    MULEQ     shift, and go to state 134
+    DIVEQ     shift, and go to state 135
+    BITANDEQ  shift, and go to state 136
+    BITOREQ   shift, and go to state 137
+    BITXOREQ  shift, and go to state 138
+    MODEQ     shift, and go to state 139
+    LSHIFTEQ  shift, and go to state 140
+    RSHIFTEQ  shift, and go to state 141
+    NOTEQ1    shift, and go to state 142
+    IFEQUAL   shift, and go to state 143
+    NOTEQ     shift, and go to state 144
+    GEQ       shift, and go to state 145
+    LEQ       shift, and go to state 146
+    GREAT     shift, and go to state 147
+    LESST     shift, and go to state 148
+
+    $default  reduce using rule 105 (Expr_Loop)
+
+
+state 186
+
+   42 TYPE: ENUM . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 198
+
+
+state 187
+
+   41 TYPE: STRUCT . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 199
+
+
+state 188
+
+   14 Function: TYPE MAIN PARENOPEN @1 Arg_List . $@2 PARENCLOSE Compound_State
+   18 Arg_List: Arg_List . COMMA Arg
+   21         | Arg_List . error Arg
+
+    error  shift, and go to state 200
+    COMMA  shift, and go to state 201
+
+    PARENCLOSE  reduce using rule 13 ($@2)
+
+    $@2  go to state 202
+
+
+state 189
+
+   19 Arg_List: Arg .
+
+    $default  reduce using rule 19 (Arg_List)
+
+
+state 190
+
+   22 Arg: TYPE . IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 203
+
+
+state 191
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List . $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE
+   18 Arg_List: Arg_List . COMMA Arg
+   21         | Arg_List . error Arg
+
+    error  shift, and go to state 200
+    COMMA  shift, and go to state 201
+
+    PARENCLOSE  reduce using rule 16 ($@4)
+
+    $@4  go to state 204
+
+
+state 192
+
+    5 Macros: HASH INCLUDE LESST IDENTIFIER DOT IDENTIFIER GREAT . Macros1
+
+    HASH  shift, and go to state 1
+
+    $default  reduce using rule 8 (Macros1)
+
+    Macros   go to state 90
+    Macros1  go to state 205
+
+
+state 193
+
+  129 enumerator: IDENTIFIER EQUALTO NUM .
+
+    $default  reduce using rule 129 (enumerator)
+
+
+state 194
+
+  127 enumerator_list: enumerator_list COMMA enumerator .
+
+    $default  reduce using rule 127 (enumerator_list)
+
+
+state 195
+
+  124 Enum_State: ENUM IDENTIFIER @7 BRACEOPEN $@8 enumerator_list . BRACECLOSE
+  127 enumerator_list: enumerator_list . COMMA enumerator
+
+    COMMA       shift, and go to state 161
+    BRACECLOSE  shift, and go to state 206
+
+
+state 196
+
+  119 Struct_State: STRUCT IDENTIFIER BRACEOPEN $@5 Assign_List BRACECLOSE .
+
+    $default  reduce using rule 119 (Struct_State)
+
+
+state 197
+
+  116 Assign_List: Assign_List TYPE . id_declarator SEMICOLON
+
+    IDENTIFIER  shift, and go to state 46
+
+    id_declarator  go to state 207
+
+
+state 198
+
+   42 TYPE: ENUM IDENTIFIER .
+
+    $default  reduce using rule 42 (TYPE)
+
+
+state 199
+
+   41 TYPE: STRUCT IDENTIFIER .
+
+    $default  reduce using rule 41 (TYPE)
+
+
+state 200
+
+   21 Arg_List: Arg_List error . Arg
+
+    BOOLEAN    shift, and go to state 7
+    INTEGER    shift, and go to state 12
+    CHARACTER  shift, and go to state 13
+    FLOAT      shift, and go to state 14
+    DOUBLE     shift, and go to state 15
+    LONG       shift, and go to state 16
+    SHORT      shift, and go to state 17
+    VOLATILE   shift, and go to state 18
+    SIGNED     shift, and go to state 19
+    VOID       shift, and go to state 20
+    CONST      shift, and go to state 21
+    ENUM       shift, and go to state 186
+    STRUCT     shift, and go to state 187
+    UNSIGNED   shift, and go to state 26
+
+    Arg   go to state 208
+    TYPE  go to state 190
+
+
+state 201
+
+   18 Arg_List: Arg_List COMMA . Arg
+
+    BOOLEAN    shift, and go to state 7
+    INTEGER    shift, and go to state 12
+    CHARACTER  shift, and go to state 13
+    FLOAT      shift, and go to state 14
+    DOUBLE     shift, and go to state 15
+    LONG       shift, and go to state 16
+    SHORT      shift, and go to state 17
+    VOLATILE   shift, and go to state 18
+    SIGNED     shift, and go to state 19
+    VOID       shift, and go to state 20
+    CONST      shift, and go to state 21
+    ENUM       shift, and go to state 186
+    STRUCT     shift, and go to state 187
+    UNSIGNED   shift, and go to state 26
+
+    Arg   go to state 209
+    TYPE  go to state 190
+
+
+state 202
+
+   14 Function: TYPE MAIN PARENOPEN @1 Arg_List $@2 . PARENCLOSE Compound_State
+
+    PARENCLOSE  shift, and go to state 210
+
+
+state 203
+
+   22 Arg: TYPE IDENTIFIER .
+
+    $default  reduce using rule 22 (Arg)
+
+
+state 204
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List $@4 . PARENCLOSE BRACEOPEN State_List BRACECLOSE
+
+    PARENCLOSE  shift, and go to state 211
+
+
+state 205
+
+    5 Macros: HASH INCLUDE LESST IDENTIFIER DOT IDENTIFIER GREAT Macros1 .
+
+    $default  reduce using rule 5 (Macros)
+
+
+state 206
+
+  124 Enum_State: ENUM IDENTIFIER @7 BRACEOPEN $@8 enumerator_list BRACECLOSE .
+
+    $default  reduce using rule 124 (Enum_State)
+
+
+state 207
+
+  116 Assign_List: Assign_List TYPE id_declarator . SEMICOLON
+
+    SEMICOLON  shift, and go to state 212
+
+
+state 208
+
+   21 Arg_List: Arg_List error Arg .
+
+    $default  reduce using rule 21 (Arg_List)
+
+
+state 209
+
+   18 Arg_List: Arg_List COMMA Arg .
+
+    $default  reduce using rule 18 (Arg_List)
+
+
+state 210
+
+   14 Function: TYPE MAIN PARENOPEN @1 Arg_List $@2 PARENCLOSE . Compound_State
+
+    BRACEOPEN  shift, and go to state 213
+
+    Compound_State  go to state 214
+
+
+state 211
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List $@4 PARENCLOSE . BRACEOPEN State_List BRACECLOSE
+
+    BRACEOPEN  shift, and go to state 215
+
+
+state 212
+
+  116 Assign_List: Assign_List TYPE id_declarator SEMICOLON .
+
+    $default  reduce using rule 116 (Assign_List)
+
+
+state 213
+
+  143 Compound_State: BRACEOPEN . $@9 State_List BRACECLOSE
+
+    $default  reduce using rule 142 ($@9)
+
+    $@9  go to state 216
+
+
+state 214
+
+   14 Function: TYPE MAIN PARENOPEN @1 Arg_List $@2 PARENCLOSE Compound_State .
+
+    $default  reduce using rule 14 (Function)
+
+
+state 215
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List $@4 PARENCLOSE BRACEOPEN . State_List BRACECLOSE
+
+    $default  reduce using rule 145 (State_List)
+
+    State_List  go to state 217
+
+
+state 216
+
+  143 Compound_State: BRACEOPEN $@9 . State_List BRACECLOSE
+
+    $default  reduce using rule 145 (State_List)
+
+    State_List  go to state 218
+
+
+state 217
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List $@4 PARENCLOSE BRACEOPEN State_List . BRACECLOSE
+  144 State_List: State_List . Stmt
+
+    CONTINUE      shift, and go to state 219
+    BOOLEAN       shift, and go to state 7
+    PRINTF        shift, and go to state 220
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    BRACECLOSE    shift, and go to state 221
+    BRACEOPEN     shift, and go to state 213
+    IF            shift, and go to state 222
+    WHILE         shift, and go to state 223
+    FOR           shift, and go to state 224
+    SWITCH        shift, and go to state 225
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    DO            shift, and go to state 226
+    IDENTIFIER    shift, and go to state 25
+    RETURN        shift, and go to state 227
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    TYPE            go to state 228
+    NUM             go to state 37
+    Declaration1    go to state 229
+    id_declarator   go to state 39
+    Assignment      go to state 40
+    Function_Call   go to state 41
+    While_State     go to state 230
+    Do_While_State  go to state 231
+    For_State       go to state 232
+    Switch_State    go to state 233
+    Struct_State    go to state 42
+    Enum_State      go to state 43
+    Print_Funct     go to state 234
+    State           go to state 235
+    Compound_State  go to state 236
+    Stmt            go to state 237
+
+
+state 218
+
+  143 Compound_State: BRACEOPEN $@9 State_List . BRACECLOSE
+  144 State_List: State_List . Stmt
+
+    CONTINUE      shift, and go to state 219
+    BOOLEAN       shift, and go to state 7
+    PRINTF        shift, and go to state 220
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    BRACECLOSE    shift, and go to state 238
+    BRACEOPEN     shift, and go to state 213
+    IF            shift, and go to state 222
+    WHILE         shift, and go to state 223
+    FOR           shift, and go to state 224
+    SWITCH        shift, and go to state 225
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    DO            shift, and go to state 226
+    IDENTIFIER    shift, and go to state 25
+    RETURN        shift, and go to state 227
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    TYPE            go to state 228
+    NUM             go to state 37
+    Declaration1    go to state 229
+    id_declarator   go to state 39
+    Assignment      go to state 40
+    Function_Call   go to state 41
+    While_State     go to state 230
+    Do_While_State  go to state 231
+    For_State       go to state 232
+    Switch_State    go to state 233
+    Struct_State    go to state 42
+    Enum_State      go to state 43
+    Print_Funct     go to state 234
+    State           go to state 235
+    Compound_State  go to state 236
+    Stmt            go to state 237
+
+
+state 219
+
+  140 State: CONTINUE . SEMICOLON
+
+    SEMICOLON  shift, and go to state 239
+
+
+state 220
+
+  130 Print_Funct: PRINTF . PARENOPEN STRINGLITERAL PARENCLOSE SEMICOLON
+  131            | PRINTF . PARENOPEN argt COMMA marker id_declarator PARENCLOSE SEMICOLON
+
+    PARENOPEN  shift, and go to state 240
+
+
+state 221
+
+   17 Function: TYPE IDENTIFIER PARENOPEN @3 Arg_List $@4 PARENCLOSE BRACEOPEN State_List BRACECLOSE .
+
+    $default  reduce using rule 17 (Function)
+
+
+state 222
+
+  147 Stmt: IF . PARENOPEN marker Expr PARENCLOSE $@10 Compound_State ELSE_OPTIONAL
+
+    PARENOPEN  shift, and go to state 241
+
+
+state 223
+
+  108 While_State: WHILE . PARENOPEN marker Expr PARENCLOSE Compound_State
+
+    PARENOPEN  shift, and go to state 242
+
+
+state 224
+
+  110 For_State: FOR . PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    PARENOPEN  shift, and go to state 243
+
+
+state 225
+
+  115 Switch_State: SWITCH . PARENOPEN Expr PARENCLOSE Case_Compd
+
+    PARENOPEN  shift, and go to state 244
+
+
+state 226
+
+  109 Do_While_State: DO . Compound_State WHILE PARENOPEN marker Expr PARENCLOSE
+
+    BRACEOPEN  shift, and go to state 213
+
+    Compound_State  go to state 245
+
+
+state 227
+
+  141 State: RETURN . Expr SEMICOLON
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 246
+
+
+state 228
+
+   50 Declaration1: TYPE . Assignment SEMICOLON
+
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    PARENOPEN     shift, and go to state 22
+    IDENTIFIER    shift, and go to state 46
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 69
+
+
+state 229
+
+  135 State: Declaration1 .
+
+    $default  reduce using rule 135 (State)
+
+
+state 230
+
+  134 State: While_State .
+
+    $default  reduce using rule 134 (State)
+
+
+state 231
+
+  139 State: Do_While_State . SEMICOLON
+
+    SEMICOLON  shift, and go to state 247
+
+
+state 232
+
+  136 State: For_State .
+
+    $default  reduce using rule 136 (State)
+
+
+state 233
+
+  137 State: Switch_State .
+
+    $default  reduce using rule 137 (State)
+
+
+state 234
+
+  138 State: Print_Funct .
+
+    $default  reduce using rule 138 (State)
+
+
+state 235
+
+  148 Stmt: State .
+
+    $default  reduce using rule 148 (Stmt)
+
+
+state 236
+
+  149 Stmt: Compound_State .
+
+    $default  reduce using rule 149 (Stmt)
+
+
+state 237
+
+  144 State_List: State_List Stmt .
+
+    $default  reduce using rule 144 (State_List)
+
+
+state 238
+
+  143 Compound_State: BRACEOPEN $@9 State_List BRACECLOSE .
+
+    $default  reduce using rule 143 (Compound_State)
+
+
+state 239
+
+  140 State: CONTINUE SEMICOLON .
+
+    $default  reduce using rule 140 (State)
+
+
+state 240
+
+  130 Print_Funct: PRINTF PARENOPEN . STRINGLITERAL PARENCLOSE SEMICOLON
+  131            | PRINTF PARENOPEN . argt COMMA marker id_declarator PARENCLOSE SEMICOLON
+
+    PD             shift, and go to state 248
+    PF             shift, and go to state 249
+    STRINGLITERAL  shift, and go to state 250
+
+    argt  go to state 251
+
+
+state 241
+
+  147 Stmt: IF PARENOPEN . marker Expr PARENCLOSE $@10 Compound_State ELSE_OPTIONAL
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 252
+
+
+state 242
+
+  108 While_State: WHILE PARENOPEN . marker Expr PARENCLOSE Compound_State
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 253
+
+
+state 243
+
+  110 For_State: FOR PARENOPEN . marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 254
+
+
+state 244
+
+  115 Switch_State: SWITCH PARENOPEN . Expr PARENCLOSE Case_Compd
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 255
+
+
+state 245
+
+  109 Do_While_State: DO Compound_State . WHILE PARENOPEN marker Expr PARENCLOSE
+
+    WHILE  shift, and go to state 256
+
+
+state 246
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  141 State: RETURN Expr . SEMICOLON
+
+    SEMICOLON  shift, and go to state 257
+    AND        shift, and go to state 130
+    OR         shift, and go to state 131
+    PLUSEQ     shift, and go to state 132
+    MINUSEQ    shift, and go to state 133
+    MULEQ      shift, and go to state 134
+    DIVEQ      shift, and go to state 135
+    BITANDEQ   shift, and go to state 136
+    BITOREQ    shift, and go to state 137
+    BITXOREQ   shift, and go to state 138
+    MODEQ      shift, and go to state 139
+    LSHIFTEQ   shift, and go to state 140
+    RSHIFTEQ   shift, and go to state 141
+    NOTEQ1     shift, and go to state 142
+    IFEQUAL    shift, and go to state 143
+    NOTEQ      shift, and go to state 144
+    GEQ        shift, and go to state 145
+    LEQ        shift, and go to state 146
+    GREAT      shift, and go to state 147
+    LESST      shift, and go to state 148
+
+
+state 247
+
+  139 State: Do_While_State SEMICOLON .
+
+    $default  reduce using rule 139 (State)
+
+
+state 248
+
+  132 argt: PD .
+
+    $default  reduce using rule 132 (argt)
+
+
+state 249
+
+  133 argt: PF .
+
+    $default  reduce using rule 133 (argt)
+
+
+state 250
+
+  130 Print_Funct: PRINTF PARENOPEN STRINGLITERAL . PARENCLOSE SEMICOLON
+
+    PARENCLOSE  shift, and go to state 258
+
+
+state 251
+
+  131 Print_Funct: PRINTF PARENOPEN argt . COMMA marker id_declarator PARENCLOSE SEMICOLON
+
+    COMMA  shift, and go to state 259
+
+
+state 252
+
+  147 Stmt: IF PARENOPEN marker . Expr PARENCLOSE $@10 Compound_State ELSE_OPTIONAL
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 260
+
+
+state 253
+
+  108 While_State: WHILE PARENOPEN marker . Expr PARENCLOSE Compound_State
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 261
+
+
+state 254
+
+  110 For_State: FOR PARENOPEN marker . Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 262
+
+
+state 255
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  115 Switch_State: SWITCH PARENOPEN Expr . PARENCLOSE Case_Compd
+
+    AND         shift, and go to state 130
+    OR          shift, and go to state 131
+    PLUSEQ      shift, and go to state 132
+    MINUSEQ     shift, and go to state 133
+    MULEQ       shift, and go to state 134
+    DIVEQ       shift, and go to state 135
+    BITANDEQ    shift, and go to state 136
+    BITOREQ     shift, and go to state 137
+    BITXOREQ    shift, and go to state 138
+    MODEQ       shift, and go to state 139
+    LSHIFTEQ    shift, and go to state 140
+    RSHIFTEQ    shift, and go to state 141
+    NOTEQ1      shift, and go to state 142
+    PARENCLOSE  shift, and go to state 263
+    IFEQUAL     shift, and go to state 143
+    NOTEQ       shift, and go to state 144
+    GEQ         shift, and go to state 145
+    LEQ         shift, and go to state 146
+    GREAT       shift, and go to state 147
+    LESST       shift, and go to state 148
+
+
+state 256
+
+  109 Do_While_State: DO Compound_State WHILE . PARENOPEN marker Expr PARENCLOSE
+
+    PARENOPEN  shift, and go to state 264
+
+
+state 257
+
+  141 State: RETURN Expr SEMICOLON .
+
+    $default  reduce using rule 141 (State)
+
+
+state 258
+
+  130 Print_Funct: PRINTF PARENOPEN STRINGLITERAL PARENCLOSE . SEMICOLON
+
+    SEMICOLON  shift, and go to state 265
+
+
+state 259
+
+  131 Print_Funct: PRINTF PARENOPEN argt COMMA . marker id_declarator PARENCLOSE SEMICOLON
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 266
+
+
+state 260
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  147 Stmt: IF PARENOPEN marker Expr . PARENCLOSE $@10 Compound_State ELSE_OPTIONAL
+
+    AND         shift, and go to state 130
+    OR          shift, and go to state 131
+    PLUSEQ      shift, and go to state 132
+    MINUSEQ     shift, and go to state 133
+    MULEQ       shift, and go to state 134
+    DIVEQ       shift, and go to state 135
+    BITANDEQ    shift, and go to state 136
+    BITOREQ     shift, and go to state 137
+    BITXOREQ    shift, and go to state 138
+    MODEQ       shift, and go to state 139
+    LSHIFTEQ    shift, and go to state 140
+    RSHIFTEQ    shift, and go to state 141
+    NOTEQ1      shift, and go to state 142
+    PARENCLOSE  shift, and go to state 267
+    IFEQUAL     shift, and go to state 143
+    NOTEQ       shift, and go to state 144
+    GEQ         shift, and go to state 145
+    LEQ         shift, and go to state 146
+    GREAT       shift, and go to state 147
+    LESST       shift, and go to state 148
+
+
+state 261
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  108 While_State: WHILE PARENOPEN marker Expr . PARENCLOSE Compound_State
+
+    AND         shift, and go to state 130
+    OR          shift, and go to state 131
+    PLUSEQ      shift, and go to state 132
+    MINUSEQ     shift, and go to state 133
+    MULEQ       shift, and go to state 134
+    DIVEQ       shift, and go to state 135
+    BITANDEQ    shift, and go to state 136
+    BITOREQ     shift, and go to state 137
+    BITXOREQ    shift, and go to state 138
+    MODEQ       shift, and go to state 139
+    LSHIFTEQ    shift, and go to state 140
+    RSHIFTEQ    shift, and go to state 141
+    NOTEQ1      shift, and go to state 142
+    PARENCLOSE  shift, and go to state 268
+    IFEQUAL     shift, and go to state 143
+    NOTEQ       shift, and go to state 144
+    GEQ         shift, and go to state 145
+    LEQ         shift, and go to state 146
+    GREAT       shift, and go to state 147
+    LESST       shift, and go to state 148
+
+
+state 262
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  110 For_State: FOR PARENOPEN marker Expr . SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    SEMICOLON  shift, and go to state 269
+    AND        shift, and go to state 130
+    OR         shift, and go to state 131
+    PLUSEQ     shift, and go to state 132
+    MINUSEQ    shift, and go to state 133
+    MULEQ      shift, and go to state 134
+    DIVEQ      shift, and go to state 135
+    BITANDEQ   shift, and go to state 136
+    BITOREQ    shift, and go to state 137
+    BITXOREQ   shift, and go to state 138
+    MODEQ      shift, and go to state 139
+    LSHIFTEQ   shift, and go to state 140
+    RSHIFTEQ   shift, and go to state 141
+    NOTEQ1     shift, and go to state 142
+    IFEQUAL    shift, and go to state 143
+    NOTEQ      shift, and go to state 144
+    GEQ        shift, and go to state 145
+    LEQ        shift, and go to state 146
+    GREAT      shift, and go to state 147
+    LESST      shift, and go to state 148
+
+
+state 263
+
+  115 Switch_State: SWITCH PARENOPEN Expr PARENCLOSE . Case_Compd
+
+    BRACEOPEN  shift, and go to state 270
+
+    Case_Compd  go to state 271
+
+
+state 264
+
+  109 Do_While_State: DO Compound_State WHILE PARENOPEN . marker Expr PARENCLOSE
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 272
+
+
+state 265
+
+  130 Print_Funct: PRINTF PARENOPEN STRINGLITERAL PARENCLOSE SEMICOLON .
+
+    $default  reduce using rule 130 (Print_Funct)
+
+
+state 266
+
+  131 Print_Funct: PRINTF PARENOPEN argt COMMA marker . id_declarator PARENCLOSE SEMICOLON
+
+    IDENTIFIER  shift, and go to state 46
+
+    id_declarator  go to state 273
+
+
+state 267
+
+  147 Stmt: IF PARENOPEN marker Expr PARENCLOSE . $@10 Compound_State ELSE_OPTIONAL
+
+    $default  reduce using rule 146 ($@10)
+
+    $@10  go to state 274
+
+
+state 268
+
+  108 While_State: WHILE PARENOPEN marker Expr PARENCLOSE . Compound_State
+
+    BRACEOPEN  shift, and go to state 213
+
+    Compound_State  go to state 275
+
+
+state 269
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON . marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 276
+
+
+state 270
+
+  114 Case_Compd: BRACEOPEN . Case_List BRACECLOSE
+
+    CASE  shift, and go to state 277
+
+    Case_State  go to state 278
+    Case_List   go to state 279
+
+
+state 271
+
+  115 Switch_State: SWITCH PARENOPEN Expr PARENCLOSE Case_Compd .
+
+    $default  reduce using rule 115 (Switch_State)
+
+
+state 272
+
+  109 Do_While_State: DO Compound_State WHILE PARENOPEN marker . Expr PARENCLOSE
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 280
+
+
+state 273
+
+  131 Print_Funct: PRINTF PARENOPEN argt COMMA marker id_declarator . PARENCLOSE SEMICOLON
+
+    PARENCLOSE  shift, and go to state 281
+
+
+state 274
+
+  147 Stmt: IF PARENOPEN marker Expr PARENCLOSE $@10 . Compound_State ELSE_OPTIONAL
+
+    BRACEOPEN  shift, and go to state 213
+
+    Compound_State  go to state 282
+
+
+state 275
+
+  108 While_State: WHILE PARENOPEN marker Expr PARENCLOSE Compound_State .
+
+    $default  reduce using rule 108 (While_State)
+
+
+state 276
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker . Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 101
+    Expr_Loop      go to state 283
+
+
+state 277
+
+  111 Case_State: CASE . CONST COLON State_List
+
+    CONST  shift, and go to state 284
+
+
+state 278
+
+  113 Case_List: Case_State .
+
+    $default  reduce using rule 113 (Case_List)
+
+
+state 279
+
+  112 Case_List: Case_List . Case_State
+  114 Case_Compd: BRACEOPEN Case_List . BRACECLOSE
+
+    BRACECLOSE  shift, and go to state 285
+    CASE        shift, and go to state 277
+
+    Case_State  go to state 286
+
+
+state 280
+
+   82 Expr: Expr . LEQ Expr
+   83     | Expr . GEQ Expr
+   84     | Expr . GREAT Expr
+   85     | Expr . LESST Expr
+   86     | Expr . NOTEQ Expr
+   87     | Expr . IFEQUAL Expr
+   88     | Expr . NOTEQ1 Expr
+   89     | Expr . OR Expr
+   90     | Expr . AND Expr
+   91     | Expr . PLUSEQ Expr
+   92     | Expr . MINUSEQ Expr
+   93     | Expr . DIVEQ Expr
+   94     | Expr . MULEQ Expr
+   95     | Expr . LSHIFTEQ Expr
+   96     | Expr . RSHIFTEQ Expr
+   97     | Expr . BITANDEQ Expr
+   98     | Expr . BITOREQ Expr
+   99     | Expr . BITXOREQ Expr
+  100     | Expr . MODEQ Expr
+  109 Do_While_State: DO Compound_State WHILE PARENOPEN marker Expr . PARENCLOSE
+
+    AND         shift, and go to state 130
+    OR          shift, and go to state 131
+    PLUSEQ      shift, and go to state 132
+    MINUSEQ     shift, and go to state 133
+    MULEQ       shift, and go to state 134
+    DIVEQ       shift, and go to state 135
+    BITANDEQ    shift, and go to state 136
+    BITOREQ     shift, and go to state 137
+    BITXOREQ    shift, and go to state 138
+    MODEQ       shift, and go to state 139
+    LSHIFTEQ    shift, and go to state 140
+    RSHIFTEQ    shift, and go to state 141
+    NOTEQ1      shift, and go to state 142
+    PARENCLOSE  shift, and go to state 287
+    IFEQUAL     shift, and go to state 143
+    NOTEQ       shift, and go to state 144
+    GEQ         shift, and go to state 145
+    LEQ         shift, and go to state 146
+    GREAT       shift, and go to state 147
+    LESST       shift, and go to state 148
+
+
+state 281
+
+  131 Print_Funct: PRINTF PARENOPEN argt COMMA marker id_declarator PARENCLOSE . SEMICOLON
+
+    SEMICOLON  shift, and go to state 288
+
+
+state 282
+
+  147 Stmt: IF PARENOPEN marker Expr PARENCLOSE $@10 Compound_State . ELSE_OPTIONAL
+
+    ELSE  shift, and go to state 289
+
+    $default  reduce using rule 151 (ELSE_OPTIONAL)
+
+    ELSE_OPTIONAL  go to state 290
+
+
+state 283
+
+  105 Expr_Loop: Expr_Loop . COMMA Expr
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop . SEMICOLON marker Expr_Loop PARENCLOSE Compound_State
+
+    SEMICOLON  shift, and go to state 291
+    COMMA      shift, and go to state 149
+
+
+state 284
+
+  111 Case_State: CASE CONST . COLON State_List
+
+    COLON  shift, and go to state 292
+
+
+state 285
+
+  114 Case_Compd: BRACEOPEN Case_List BRACECLOSE .
+
+    $default  reduce using rule 114 (Case_Compd)
+
+
+state 286
+
+  112 Case_List: Case_List Case_State .
+
+    $default  reduce using rule 112 (Case_List)
+
+
+state 287
+
+  109 Do_While_State: DO Compound_State WHILE PARENOPEN marker Expr PARENCLOSE .
+
+    $default  reduce using rule 109 (Do_While_State)
+
+
+state 288
+
+  131 Print_Funct: PRINTF PARENOPEN argt COMMA marker id_declarator PARENCLOSE SEMICOLON .
+
+    $default  reduce using rule 131 (Print_Funct)
+
+
+state 289
+
+  150 ELSE_OPTIONAL: ELSE . Stmt
+
+    CONTINUE      shift, and go to state 219
+    BOOLEAN       shift, and go to state 7
+    PRINTF        shift, and go to state 220
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    BRACEOPEN     shift, and go to state 213
+    IF            shift, and go to state 222
+    WHILE         shift, and go to state 223
+    FOR           shift, and go to state 224
+    SWITCH        shift, and go to state 225
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    DO            shift, and go to state 226
+    IDENTIFIER    shift, and go to state 25
+    RETURN        shift, and go to state 227
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    TYPE            go to state 228
+    NUM             go to state 37
+    Declaration1    go to state 229
+    id_declarator   go to state 39
+    Assignment      go to state 40
+    Function_Call   go to state 41
+    While_State     go to state 230
+    Do_While_State  go to state 231
+    For_State       go to state 232
+    Switch_State    go to state 233
+    Struct_State    go to state 42
+    Enum_State      go to state 43
+    Print_Funct     go to state 234
+    State           go to state 235
+    Compound_State  go to state 236
+    Stmt            go to state 293
+
+
+state 290
+
+  147 Stmt: IF PARENOPEN marker Expr PARENCLOSE $@10 Compound_State ELSE_OPTIONAL .
+
+    $default  reduce using rule 147 (Stmt)
+
+
+state 291
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON . marker Expr_Loop PARENCLOSE Compound_State
+
+    $default  reduce using rule 56 (marker)
+
+    marker  go to state 294
+
+
+state 292
+
+  111 Case_State: CASE CONST COLON . State_List
+
+    $default  reduce using rule 145 (State_List)
+
+    State_List  go to state 295
+
+
+state 293
+
+  150 ELSE_OPTIONAL: ELSE Stmt .
+
+    $default  reduce using rule 150 (ELSE_OPTIONAL)
+
+
+state 294
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker . Expr_Loop PARENCLOSE Compound_State
+
+    INCR                  shift, and go to state 8
+    DECR                  shift, and go to state 9
+    PLUS                  shift, and go to state 10
+    MINUS                 shift, and go to state 11
+    BINARYONESCOMPLEMENT  shift, and go to state 97
+    NOT                   shift, and go to state 98
+    PARENOPEN             shift, and go to state 99
+    IDENTIFIER            shift, and go to state 46
+    SIGN_SHORT            shift, and go to state 27
+    UNSIGN_SHORT          shift, and go to state 28
+    SIGN_LONG             shift, and go to state 29
+    UNSIGN_LONG           shift, and go to state 30
+    SIGN_INT              shift, and go to state 31
+    UNSIGN_INT            shift, and go to state 32
+    FLOAT_DATA            shift, and go to state 33
+
+    $default  reduce using rule 104 (Expr)
+
+    NUM            go to state 37
+    id_declarator  go to state 39
+    Assignment     go to state 100
+    Expr           go to state 101
+    Expr_Loop      go to state 296
+
+
+state 295
+
+  111 Case_State: CASE CONST COLON State_List .
+  144 State_List: State_List . Stmt
+
+    CONTINUE      shift, and go to state 219
+    BOOLEAN       shift, and go to state 7
+    PRINTF        shift, and go to state 220
+    INCR          shift, and go to state 8
+    DECR          shift, and go to state 9
+    PLUS          shift, and go to state 10
+    MINUS         shift, and go to state 11
+    INTEGER       shift, and go to state 12
+    CHARACTER     shift, and go to state 13
+    FLOAT         shift, and go to state 14
+    DOUBLE        shift, and go to state 15
+    LONG          shift, and go to state 16
+    SHORT         shift, and go to state 17
+    VOLATILE      shift, and go to state 18
+    SIGNED        shift, and go to state 19
+    VOID          shift, and go to state 20
+    CONST         shift, and go to state 21
+    PARENOPEN     shift, and go to state 22
+    BRACEOPEN     shift, and go to state 213
+    IF            shift, and go to state 222
+    WHILE         shift, and go to state 223
+    FOR           shift, and go to state 224
+    SWITCH        shift, and go to state 225
+    ENUM          shift, and go to state 23
+    STRUCT        shift, and go to state 24
+    DO            shift, and go to state 226
+    IDENTIFIER    shift, and go to state 25
+    RETURN        shift, and go to state 227
+    UNSIGNED      shift, and go to state 26
+    SIGN_SHORT    shift, and go to state 27
+    UNSIGN_SHORT  shift, and go to state 28
+    SIGN_LONG     shift, and go to state 29
+    UNSIGN_LONG   shift, and go to state 30
+    SIGN_INT      shift, and go to state 31
+    UNSIGN_INT    shift, and go to state 32
+    FLOAT_DATA    shift, and go to state 33
+
+    $default  reduce using rule 111 (Case_State)
+
+    TYPE            go to state 228
+    NUM             go to state 37
+    Declaration1    go to state 229
+    id_declarator   go to state 39
+    Assignment      go to state 40
+    Function_Call   go to state 41
+    While_State     go to state 230
+    Do_While_State  go to state 231
+    For_State       go to state 232
+    Switch_State    go to state 233
+    Struct_State    go to state 42
+    Enum_State      go to state 43
+    Print_Funct     go to state 234
+    State           go to state 235
+    Compound_State  go to state 236
+    Stmt            go to state 237
+
+
+state 296
+
+  105 Expr_Loop: Expr_Loop . COMMA Expr
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop . PARENCLOSE Compound_State
+
+    COMMA       shift, and go to state 149
+    PARENCLOSE  shift, and go to state 297
+
+
+state 297
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE . Compound_State
+
+    BRACEOPEN  shift, and go to state 213
+
+    Compound_State  go to state 298
+
+
+state 298
+
+  110 For_State: FOR PARENOPEN marker Expr SEMICOLON marker Expr_Loop SEMICOLON marker Expr_Loop PARENCLOSE Compound_State .
+
+    $default  reduce using rule 110 (For_State)

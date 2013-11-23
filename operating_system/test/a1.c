@@ -1,0 +1,73 @@
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+	printf("Main purpose is to check arithmetic operations\n");
+	int i,a,b,sum, result;
+	char ch;
+	float f;
+	volatile c;
+	long d;
+	/*add demo*/
+	i=4;
+	a=15;
+	b=7;
+	printf("****simple arithmetic ops******printf statements******\n");
+	printf("--------------\n");
+	printf("add num to id demo:\n");
+	printf("adding 1 to i= ");
+	printf("%d",i);
+	printf("\n");
+	i=1+i;
+	printf("after adding :\n");
+	printf("%d",i);
+	printf("--------------\n");
+	printf("add id to id demo:\n");
+	printf("a is: ");
+	printf("%d", a);
+	printf("\n");
+	printf("b is: ");
+	printf("%d", b);
+	printf("\n");
+	sum=a+b;
+	printf("sum is: ");
+	printf("%d", sum);
+	printf("\n");
+	printf("--------------\n");
+	printf("subtract demo\n");
+	printf("a is: ");
+	printf("%d", a);
+	printf("\n");
+	printf("b is: ");
+	printf("%d", b);
+	printf("\n");
+	result=a-b;
+	printf("result is: ");
+	printf("%d", result);
+	printf("\n");
+	printf("--------------\n");
+	printf("multiplication demo\n");
+	printf("a is: ");
+	printf("%d", a);
+	printf("\n");
+	printf("b is: ");
+	printf("%d", b);
+	printf("\n");
+	result=a*b;
+	printf("result is: ");
+	printf("%d", result);
+	printf("\n");
+	printf("--------------\n");
+	printf("division demo\n");
+	printf("a is: ");
+	printf("%d", a);
+	printf("\n");
+	printf("b is: ");
+	printf("%d", b);
+	printf("\n");
+	result=a/b;
+	printf("result is: ");
+	printf("%d", result);
+	printf("\n");	
+printf("Program closes");
+}
