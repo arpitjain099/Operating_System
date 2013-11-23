@@ -1,0 +1,43 @@
+#ifndef VM_PAGE_H_
+#define VM_PAGE_H_
+#include "lib/kernel/hash.h"
+
+enum special_page {
+  SWAP,
+  ZERO
+};
+static const char *(special_page_names[]) = {"SWAP"};
+inline static const char * special_page_name(const enum special_page page_num) {
+  return special_page_names[page_num];
+}
+
+  
+//this just defines the head of the struct which all special
+// page elements must begin with
+struct special_page_elem {
+  enum special_page type;
+  struct hash_elem elem;
+  uint32_t virtual_page;
+};
+
+struct swap_page {
+  enum special_page type;
+  struct hash_elem elem;
+  uint32_t virtual_page;
+  int index;
+  bool dirty; //Whether the page before evicting to SWAP is dirty or not. 
+  struct special_page_elem *evicted_page; //the evicted page before swaping
+};
+
+void init_supplemental_pagetable (struct thread *t);
+void destroy_supplemental_pagetable (struct thread *t);
+struct special_page_elem * add_lazy_page (struct thread *t, struct special_page_elem *page);
+struct special_page_elem * find_lazy_page (struct thread *t, uint32_t ptr);
+bool validate_free_page (void *upage, uint32_t read_bytes);
+void expire_page (struct special_page_elem * gen_page);
+void print_supplemental_page_table (void);
+void print_page_entry (struct special_page_elem *gen_page);
+struct swap_page *new_swap_page (uint32_t, int , bool, struct special_page_elem *);
+struct special_page_elem *
+add_lazy_page_unsafe (struct thread *t, struct special_page_elem *page);
+#endif /*VM_PAGE_H_*/
